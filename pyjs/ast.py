@@ -8,7 +8,7 @@ if sys.version >= "3":
 
 
 class Node(pyast.Node):
-    pass
+    _debug = False
 
 
 class Statement(Node):
@@ -39,7 +39,7 @@ class BlockStatement(Statement):
     body = pyast.seq(Node, null=True)
 
 
-class Function(pyast.Node):
+class Function(Node):
     id = pyast.field(Identifier, null=True)
     params = pyast.seq(Identifier, null=True)
     body = pyast.field((BlockStatement, Expression))
@@ -53,11 +53,11 @@ class Literal(Expression):
     value = pyast.field((basestring, bool, int, type(None)))
 
 
-class Program(pyast.Node):
+class Program(Node):
     body = pyast.seq(Statement, null=True)
 
 
-class Property(pyast.Node):
+class Property(Node):
     key = pyast.field((Literal, Identifier))
     value = pyast.field(Expression)
     kind = pyast.field(("init", "get", "set"), default="init")
@@ -97,7 +97,6 @@ class UpdateOperator(Operator):
 
 class FunctionDeclaration(Function, Declaration):
     pass
-
 
 class VariableDeclaration(Declaration):
     kind = pyast.field(("var", "let", "const"))
