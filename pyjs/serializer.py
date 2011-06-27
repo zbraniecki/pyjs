@@ -60,7 +60,7 @@ class Serializer(object):
 
     @classmethod
     def wrap_expr(cls, s, cprec, xprec):
-        return s if (xprec > cprec) else "(%s)"
+        return s if (xprec > cprec) else "(%s)" % s
 
     @classmethod
     def dump_program(cls, prog):
@@ -199,14 +199,14 @@ class Serializer(object):
                 return "\"%s\"" % e.value
             elif type(e.value) is int:
                 return str(e.value)
-            elif issubclass(e.value, pyjs.ast.Literal):
-                return e.value.string
+            elif e.value is None:
+                return "null"
         elif isinstance(e, pyjs.ast.CallExpression):
             callee = cls.dump_expr(e.callee, indent, 17, False)
             args = cls.dump_args(e.arguments, indent)
             return cls.wrap_expr("%s%s" % (callee, args),
                                  cprec,
-                                 18)
+                                 19) # Changed! I switched 18 to 19 to avoid new String() to be new (String())
         elif isinstance(e, pyjs.ast.NewExpression):
             if len(e.arguments) == 0:
                 string = "new %s" % cls.dump_expr(e.callee, indent, 18, False)
@@ -237,7 +237,8 @@ class Serializer(object):
             return cls.wrap_expr('%s%s' % ((op, s) if e.prefix else (s, op)),
                                  cprec,
                                  15)
-        elif isinstance(e, pyjs.ast.BinaryExpression):
+        elif isinstance(e, (pyjs.ast.BinaryExpression,
+                            pyjs.ast.LogicalExpression)):
             if e.operator.token == "..":
                 pass
             else:
@@ -252,12 +253,12 @@ class Serializer(object):
                                    (noIn and prec <= 11)),
                      op]
                 x = e.left
-                while type(x) == type(e) and precedence[x.operator] == prec:
+                while type(x) == type(e) and precedence[x.operator.token] == prec:
                     a.append(cls.dump_expr(x.right,
                                            indent,
                                            prec,
                                            (noIn and prec <= 11)))
-                    a.append(x.operator)
+                    a.append(x.operator.token)
                     x = x.left
                 a.append(cls.dump_expr(x,
                                        indent,

@@ -328,4 +328,4 @@ class ObjectPattern(Pattern):
 LET = "let"
 VAR = "var"
 CONST = "const"
-NULL = "null"
+NULL = None
