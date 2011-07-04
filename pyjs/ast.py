@@ -8,7 +8,7 @@ if sys.version >= "3":
 
 
 class Node(pyast.Node):
-    _debug = False
+    _debug = True
 
 
 class Statement(Node):
@@ -50,7 +50,7 @@ class Function(Node):
 
 
 class Literal(Expression):
-    value = pyast.field((basestring, bool, int, type(None)))
+    value = pyast.field((basestring, bool, int, type(None)), null=True)
 
 
 class Program(Node):
@@ -277,7 +277,7 @@ class LogicalExpression(Expression):
 
 class MemberExpression(Expression):
     obj = pyast.field(Expression)
-    prop = pyast.field((Identifier, Expression))
+    prop = pyast.field(Expression)
     computed = pyast.field(bool)
 
 
