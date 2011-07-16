@@ -63,6 +63,10 @@ class Serializer(object):
         return s if (xprec > cprec) else "(%s)" % s
 
     @classmethod
+    def uneval(cls, string):
+        return "\"%s\"" % string
+
+    @classmethod
     def dump_program(cls, prog):
         lines = [cls.dump_stmt(elem) for elem in prog.body]
         return '\n'.join(lines)
