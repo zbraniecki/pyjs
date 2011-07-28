@@ -64,7 +64,8 @@ class Serializer(object):
 
     @classmethod
     def uneval(cls, string):
-        return "\"%s\"" % string
+        return "\"%s\"" % string.replace('"', '\\"') \
+                                .replace('\n', '\\\n')
 
     @classmethod
     def dump_program(cls, prog):
@@ -200,7 +201,7 @@ class Serializer(object):
             return e.name
         elif isinstance(e, pyjs.ast.Literal):
             if is_string(e.value):
-                return "\"%s\"" % e.value
+                return cls.uneval(e.value)
             elif type(e.value) is int:
                 return str(e.value)
             elif e.value is None:
