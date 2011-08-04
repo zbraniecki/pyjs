@@ -8,7 +8,7 @@ if sys.version >= "3":
 
 
 class Node(pyast.Node):
-    _debug = True
+    _debug = False
 
 
 class Statement(Node):
